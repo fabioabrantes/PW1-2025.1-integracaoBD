@@ -32,6 +32,55 @@ app.post("/users", async (request: Request, response: Response) => {
     response.status(500).json({ error: "Erro interno do servidor." });
   }
 });
+app.get("/users", async (request: Request, response: Response) => {
+  try {
+    const resultado = await prisma.user.findMany({
+      orderBy: {
+        name: "asc",
+      },
+    });
+    response.status(200).json(resultado);
+  } catch (error: any) {
+    console.log(error);
+    response.status(500).json({ error: "Erro interno do servidor." });
+  }
+});
+app.put("/users/:id", async (request: Request, response: Response) => {
+  const { name, cpf, email } = request.body;
+  const { id } = request.params;
+
+  try {
+    const resultado = await prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        email,
+        cpf,
+        name,
+      },
+    });
+    response.status(200).json(resultado);
+  } catch (error: any) {
+    console.log(error);
+    response.status(500).json({ error: "Erro interno do servidor." });
+  }
+});
+app.delete("/users/:id", async (request: Request, response: Response) => {
+  const { id } = request.params;
+
+  try {
+    const resultado = await prisma.user.delete({
+      where: {
+        id,
+      },
+    });
+    response.status(200).json(resultado);
+  } catch (error: any) {
+    console.log(error);
+    response.status(500).json({ error: "Erro interno do servidor." });
+  }
+});
 
 app.listen(3000, () => {
   console.log("server online on port 3000");
